@@ -28,7 +28,7 @@ NetTensorRT::NetTensorRT(const std::string& model_path)
   std::cout << "Trying to open model" << std::endl;
 
   // generate trt path form model path
-  std::string engine_path = model_path + "/model.trt";
+  std::string engine_path = model_path + "model.trt";
 
   // try to deserialize the engine
   try {
@@ -48,7 +48,7 @@ NetTensorRT::NetTensorRT(const std::string& model_path)
   // if there is no engine, try to generate one from onnx
   if (!_engine) {
     // generate path
-    std::string onnx_path = model_path + "/model.onnx";
+    std::string onnx_path = model_path + "model.onnx";
     // generate engine
     generateEngine(onnx_path);
     // save engine

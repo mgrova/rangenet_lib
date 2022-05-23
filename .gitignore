@@ -3,6 +3,8 @@
 # Edit at https://www.gitignore.io/?templates=c++,code,cmake,eclipse
 
 ### C++ ###
+build/*
+
 # Prerequisites
 *.d
 
