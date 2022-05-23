@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-    auto node = std::make_unique<SegmentationNode>();
+    auto node = std::make_unique<node::SegmentationNode>();
 
     return 0;
 }

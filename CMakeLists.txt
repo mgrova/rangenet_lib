@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(rangenet_lib VERSION 0.1 LANGUAGES C CXX)
 
-option(BUILD_EXAMPLES "Building example" ON)
+option(BUILD_SIMPLE_EXAMPLE "Building example"  ON)
+option(BUILD_ROS_NODE       "Building ROS node" ON)
 
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Release CACHE STRING
@@ -49,14 +50,25 @@ find_package(TensorRT REQUIRED PATHS cmake)
 if (${TENSORRT_FOUND})
   target_include_directories(${PROJECT_NAME} PUBLIC ${TENSORRT_INCLUDE_DIRS})
   target_link_libraries(${PROJECT_NAME} PUBLIC ${TENSORRT_LIBRARIES})
-endif (${TENSORRT_FOUND})
+endif()
+
+if(${BUILD_ROS_NODE})
+  find_package(catkin COMPONENTS roscpp sensor_msgs)
+  if(${catkin_FOUND})
+      catkin_package(
+          CATKIN_DEPENDS roscpp sensor_msgs
+          INCLUDE_DIRS include
+      )
+  else()
+    set(BUILD_ROS_NODE OFF)
+  endif()
+endif()
 
 #############################
 ######	  Examples	   ######
 #############################
-if(BUILD_EXAMPLES)
-  add_subdirectory(examples)
-endif()
+add_subdirectory(examples)
+
 
 
 

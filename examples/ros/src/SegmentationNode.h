@@ -3,7 +3,7 @@
 
 namespace node
 {
-class SegmentationNode()
+class SegmentationNode
 {
 public:
     SegmentationNode();
