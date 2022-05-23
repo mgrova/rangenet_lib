@@ -1,4 +1,5 @@
 option(BUILD_SIMPLE "Build simple inference interface" ON)
+option(BUILD_ROS    "Build ROS inference interface" ON)
 
 if (${BUILD_SIMPLE})
 find_package(OpenCV REQUIRED COMPONENTS core viz)
@@ -7,4 +8,8 @@ find_package(OpenCV REQUIRED COMPONENTS core viz)
         add_executable(simple_infer simple_infer/infer.cpp)
         target_link_libraries(simple_infer PRIVATE ${PROJECT_NAME} ${OpenCV_LIBS})
     endif()
+endif()
+
+if (${BUILD_ROS})
+add_subdirectory(ros)    
 endif()
