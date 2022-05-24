@@ -53,10 +53,10 @@ if (${TENSORRT_FOUND})
 endif()
 
 if(${BUILD_ROS_NODE})
-  find_package(catkin COMPONENTS roscpp sensor_msgs)
+  find_package(catkin COMPONENTS roscpp sensor_msgs pcl_ros pcl_conversions)
   if(${catkin_FOUND})
       catkin_package(
-          CATKIN_DEPENDS roscpp sensor_msgs
+          CATKIN_DEPENDS roscpp sensor_msgs pcl_ros pcl_conversions
           INCLUDE_DIRS include
       )
   else()

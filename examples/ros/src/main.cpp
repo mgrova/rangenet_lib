@@ -5,7 +5,12 @@
 
 int main(int argc, char **argv)
 {
-    auto node = std::make_unique<node::SegmentationNode>();
+    ros::init(argc, argv, "sloam");
+    ros::NodeHandle n("sloam");
+
+    auto node = std::make_unique<seg::SegmentationNode>(n);
+    
+    ros::spin();
 
     return 0;
 }

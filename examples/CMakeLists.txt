@@ -9,10 +9,10 @@ find_package(OpenCV REQUIRED COMPONENTS core viz)
 endif()
 
 if (${BUILD_ROS_NODE})
-    file(GLOB_RECURSE SRCS "ros/src/*.c*" "ros/src/*.h*")
+    file(GLOB_RECURSE SRCS "ros/src/*.cpp")
     add_executable(ros_node ${SRCS})
 
-    target_include_directories(ros_node PRIVATE ${PROJECT_NAME} ${catkin_INCLUDE_DIRS})
+    target_include_directories(ros_node PRIVATE ${PROJECT_NAME} ${catkin_INCLUDE_DIRS} ros/include)
     target_link_libraries(ros_node PRIVATE ${PROJECT_NAME} ${catkin_LIBRARIES})
     add_dependencies(ros_node ${catkin_EXPORTED_TARGETS})
 endif()
