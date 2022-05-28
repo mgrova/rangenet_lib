@@ -13,8 +13,8 @@ SegmentationNode::SegmentationNode(const ros::NodeHandle &nh) : _nh(nh)
 
 bool SegmentationNode::initializeModel(const bool &verbose, const std::string &path, const std::string &backend)
 {
-    try {
-
+    try 
+    {
         _net = std::move(rangenet::segmentation::make_net(path, backend));
         _net->verbosity(verbose);
 
@@ -22,7 +22,7 @@ bool SegmentationNode::initializeModel(const bool &verbose, const std::string &p
     } 
     catch (const std::runtime_error &ex) 
     {
-        std::cerr << ex.what() << std::endl;
+        std::cerr << "SegmentationNode::initializeModel" << ex.what() << std::endl;
         return false;
     }
 }
@@ -40,10 +40,10 @@ void SegmentationNode::segmentationCb(const sensor_msgs::PointCloud2ConstPtr &cl
         cloudVector.push_back(point.z); cloudVector.push_back(point.intensity);
     }
 
-    std::vector<std::vector<float>> semantic_scan = net->infer(cloudVector, cloud->points.size());
+    std::vector<std::vector<float>> semantic_scan = _net->infer(cloudVector, cloud->points.size());
 
-    std::vector<cv::Vec3f> points = net->getPoints(cloudVector, cloud->points.size());
-    std::vector<cv::Vec3b> color_mask = net->getLabels(semantic_scan, cloud->points.size());
+    std::vector<cv::Vec3f> points = _net->getPoints(cloudVector, cloud->points.size());
+    std::vector<cv::Vec3b> color_mask = _net->getLabels(semantic_scan, cloud->points.size());
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr detections_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 	for (unsigned int i=0; i<points.size(); i++) 
@@ -59,9 +59,9 @@ void SegmentationNode::segmentationCb(const sensor_msgs::PointCloud2ConstPtr &cl
 		
 		pcl::PointXYZRGB pclp;
 		// 3D coordinates
-		pclp.x = points[i].x;
-		pclp.y = points[i].y;
-		pclp.z = points[i].z;
+		pclp.x = points[i](0);
+		pclp.y = points[i](1);
+		pclp.z = points[i](2);
 		
 		// RGB color, needs to be represented as an integer
 		uint32_t rgb = ((uint32_t)rgbv[2] << 16 | (uint32_t)rgbv[1] << 8 | (uint32_t)rgbv[0]);
