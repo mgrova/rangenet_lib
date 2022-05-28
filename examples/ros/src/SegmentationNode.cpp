@@ -7,30 +7,41 @@ namespace seg
 {
 SegmentationNode::SegmentationNode(const ros::NodeHandle &nh) : _nh(nh)
 {
-    _cloudSub      = _nh.subscribe("topic_name", 10, &SegmentationNode::segmentationCb, this);
-    _detectionsPub = _nh.advertise<sensor_msgs::PointCloud2>("segmentation", 1);
-}
+    std::string cloud_sub, segmentation_pub, model_path, backend;
+    int verbose;
+    ros::param::param<std::string>("cloud_sub", cloud_sub, "/velodyne_points");
+    ros::param::param<std::string>("segmentation_pub", segmentation_pub, "segmentation");
+    ros::param::param<std::string>("model_path", model_path, "/home/user/shared_folder/darknet53/");
+    ros::param::param<std::string>("backend", backend, "tensorrt");
+    ros::param::param<int>("verbose", verbose, 1);
 
-bool SegmentationNode::initializeModel(const bool &verbose, const std::string &path, const std::string &backend)
-{
-    try 
+    _cloud_sub      = _nh.subscribe(cloud_sub, 10, &SegmentationNode::segmentationCb, this);
+    _detections_pub = _nh.advertise<sensor_msgs::PointCloud2>(segmentation_pub, 1);
+
+    /// \note. Ensure that path finish with "/"
+    std::string value {"/"};
+    if (!std::equal(value.rbegin(), value.rend(), model_path.rbegin()))
+        model_path += value;
+
+    try
     {
-        _net = std::move(rangenet::segmentation::make_net(path, backend));
-        _net->verbosity(verbose);
+        _net = std::move(rangenet::segmentation::make_net(model_path, backend));
+        const auto verbose_bool = verbose == 1 ? true : false;
+        _net->verbosity(verbose_bool);
 
-        return true;
+        std::cout << "Successfully loaded model from: "
+                  << model_path << " with backend: " << backend << std::endl;
     } 
-    catch (const std::runtime_error &ex) 
+    catch (...) 
     {
-        std::cerr << "SegmentationNode::initializeModel" << ex.what() << std::endl;
-        return false;
+        throw;
     }
 }
 
-void SegmentationNode::segmentationCb(const sensor_msgs::PointCloud2ConstPtr &cloudMsg)
+void SegmentationNode::segmentationCb(const sensor_msgs::PointCloud2ConstPtr &cloud_msg)
 {
     pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>);
-    pcl::fromROSMsg(*cloudMsg, *cloud);
+    pcl::fromROSMsg(*cloud_msg, *cloud);
     pcl_conversions::toPCL(ros::Time::now(), cloud->header.stamp);
 
     std::vector<float> cloudVector;
@@ -51,12 +62,8 @@ void SegmentationNode::segmentationCb(const sensor_msgs::PointCloud2ConstPtr &cl
 		// get the RGB color value for the point
 		cv::Vec3b rgbv(255,255,255);
 		if (color_mask.size() > i) 
-        {
 			rgbv = color_mask[i];
-		}
 
-		/// \todo. check for erroneous coordinates (NaN, Inf, etc.)
-		
 		pcl::PointXYZRGB pclp;
 		// 3D coordinates
 		pclp.x = points[i](0);
@@ -75,10 +82,10 @@ void SegmentationNode::segmentationCb(const sensor_msgs::PointCloud2ConstPtr &cl
     
     sensor_msgs::PointCloud2 ros_cloud;
     pcl::toROSMsg(*detections_cloud, ros_cloud);
-    ros_cloud.header.frame_id = "map";
+    ros_cloud.header.frame_id = cloud_msg->header.frame_id;
     ros_cloud.header.stamp = ros::Time::now();
 
-    _detectionsPub.publish(ros_cloud);
+    _detections_pub.publish(ros_cloud);
 }
 
  

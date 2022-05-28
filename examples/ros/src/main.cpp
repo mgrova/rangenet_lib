@@ -7,17 +7,14 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rangenet_node");
     ros::NodeHandle n("rangenet_node");
-
-    const auto path_folder {"/home/user/shared_folder/darknet53"};
-    const auto backend {"tensorrt"};
-    auto node = std::make_unique<seg::SegmentationNode>(n);
-    if (!node->initializeModel(true, path_folder, backend))
+    try
     {
-        std::cout << "Unable to load model. Going out ..." << std::endl;
+        auto node = std::make_unique<seg::SegmentationNode>(n);
+        ros::spin();
+    }
+    catch(const std::runtime_error &ex)
+    {
+        std::cerr << "Unable to load model: " << ex.what() << std::endl;
         return 0;
     }
-
-    ros::spin();
-
-    return 0;
 }
