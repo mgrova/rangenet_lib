@@ -11,7 +11,7 @@ SegmentationNode::SegmentationNode(const ros::NodeHandle &nh) : _nh(nh)
     int verbose;
     _nh.param<std::string>("cloud_sub", cloud_sub, "/velodyne_points");
     _nh.param<std::string>("segmentation_pub", segmentation_pub, "segmentation");
-    _nh.param<std::string>("model_path", model_path, "/home/user/shared_folder/rangenet_semantickitti_darknet21_logs");
+    _nh.param<std::string>("model_path", model_path, "/home/user/shared_folder/darknet53");
     _nh.param<std::string>("backend", backend, "tensorrt");
     _nh.param<int>("verbose", verbose, 1);
 

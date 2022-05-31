@@ -6,7 +6,7 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rangenet_node");
-    ros::NodeHandle n("rangenet_node");
+    ros::NodeHandle n("~");
     try
     {
         auto node = std::make_unique<seg::SegmentationNode>(n);
