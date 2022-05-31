@@ -1,0 +1,11 @@
+<launch>
+   <node name="ros_node" pkg="rangenet_lib" type="ros_node" output="screen" >
+      <param name="cloud_sub"        value="/velodyne_points" />
+      <param name="segmentation_pub" value="segmented_cloud" />
+      <param name="model_path"       value="/home/user/shared_folder/rangenet_semantickitti_darknet21_logs" />
+      <param name="backend"          value="tensorrt" />
+      <param name="verbose"          value="1" />
+
+   </node> 
+
+</launch>

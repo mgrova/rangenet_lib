@@ -9,11 +9,11 @@ SegmentationNode::SegmentationNode(const ros::NodeHandle &nh) : _nh(nh)
 {
     std::string cloud_sub, segmentation_pub, model_path, backend;
     int verbose;
-    ros::param::param<std::string>("cloud_sub", cloud_sub, "/velodyne_points");
-    ros::param::param<std::string>("segmentation_pub", segmentation_pub, "segmentation");
-    ros::param::param<std::string>("model_path", model_path, "/home/user/shared_folder/darknet53/");
-    ros::param::param<std::string>("backend", backend, "tensorrt");
-    ros::param::param<int>("verbose", verbose, 1);
+    _nh.param<std::string>("cloud_sub", cloud_sub, "/velodyne_points");
+    _nh.param<std::string>("segmentation_pub", segmentation_pub, "segmentation");
+    _nh.param<std::string>("model_path", model_path, "/home/user/shared_folder/rangenet_semantickitti_darknet21_logs");
+    _nh.param<std::string>("backend", backend, "tensorrt");
+    _nh.param<int>("verbose", verbose, 1);
 
     _cloud_sub      = _nh.subscribe(cloud_sub, 10, &SegmentationNode::segmentationCb, this);
     _detections_pub = _nh.advertise<sensor_msgs::PointCloud2>(segmentation_pub, 1);
