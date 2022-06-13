@@ -2,10 +2,12 @@
    <node name="ros_node" pkg="rangenet_lib" type="ros_node" output="screen" >
       <param name="cloud_sub"        value="/velodyne_points" />
       <param name="segmentation_pub" value="segmented_cloud" />
-      <param name="model_path"       value="/home/user/shared_folder/rangenet_semantickitti_darknet21_logs" />
+      <param name="model_path"       value="/home/user/shared_folder/darknet53" />
       <param name="backend"          value="tensorrt" />
       <param name="verbose"          value="1" />
-
    </node> 
+
+   <node pkg="tf2_ros" type="static_transform_publisher" name="upward_to_baselink" args="0.0 0.0 1.8 0.0 0.0 0.0 
+                                                                                         map velodyne" />
 
 </launch>
